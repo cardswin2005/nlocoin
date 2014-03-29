@@ -1,8 +1,8 @@
 #ifndef BITCOINGUI_H
 #define BITCOINGUI_H
 
-#include <QMainWindow>
-#include <QSystemTrayIcon>
+#include <QtGui/QMainWindow>
+#include <QtGui/QSystemTrayIcon>
 
 class TransactionTableModel;
 class ClientModel;

@@ -29,7 +29,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0xf691c9094bd55c05b53f32bd34222f18d11a6c49cb45498b7cbbbdcb0cdf67e3");
+uint256 hashGenesisBlock("0xd164b73035049c80dff114df7dd482d795be9c844bf5c1d90565a4d973e16cf6");
 static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // starting difficulty is 1 / 2^12
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -828,13 +828,16 @@ uint256 static GetOrphanRoot(const CBlock* pblock)
 
 int64 static GetBlockValue(int nHeight, int64 nFees)
 {
-    int64 nSubsidy = 10 * COIN;
+    int64 nSubsidy = 400 * COIN;
+
+	// Subsidy is cut in half every 840000 blocks, which will occur approximately every 4 years
+    nSubsidy >>= (nHeight / 105000); // Litecoin: 840k blocks in ~4 years, NLOCoin 105k blocks in ~6 months
 
     return nSubsidy + nFees;
 }
 
-static const int64 nTargetTimespan = 1 * 24 * 60 * 60; // nlocoin: 1 days
-static const int64 nTargetSpacing = 120; // nlocoin: 2 minute blocks
+static const int64 nTargetTimespan = 3.5 * 24 * 60 * 60; // nlocoin: 1 days
+static const int64 nTargetSpacing = 2.5 * 60; // nlocoin: 2.5 minute blocks
 static const int64 nInterval = nTargetTimespan / nTargetSpacing;
 
 // Thanks: Balthazar for suggesting the following fix
@@ -1981,7 +1984,7 @@ bool LoadBlockIndex(bool fAllowNew)
         pchMessageStart[1] = 0xc0;
         pchMessageStart[2] = 0xb8;
         pchMessageStart[3] = 0xdb;
-        hashGenesisBlock = uint256("0xe0b649ae71dc5c98066e6e321996f10124062de17f6d0bc08da515966e73acd7");
+        hashGenesisBlock = uint256("0x265e26fcefd1f6631604bffa0ce0fe9459f799ea0b9f2066066322be62290e8b");
     }
 
     //
@@ -2002,7 +2005,7 @@ bool LoadBlockIndex(bool fAllowNew)
     
         
         // Genesis block
-        const char* pszTimestamp = "Putin Reaches Out to U.S. on Crimea, White House Says";
+        const char* pszTimestamp = "Legal action by local firm over Flight 370 raises questions";
         CTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
@@ -2014,21 +2017,21 @@ bool LoadBlockIndex(bool fAllowNew)
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1396067392; //epochtime
+        block.nTime    = 1396110074; //epochtime
         block.nBits    = 0x1e0ffff0;
-        block.nNonce   = 2996791;
+        block.nNonce   = 2882083;
 
         if (fTestNet)
         {
-            block.nTime    = 1396040881;
-            block.nNonce   = 829530;
+            block.nTime    = 1396105626;
+            block.nNonce   = 525600;
         }
 
         //// debug print
         printf("%s\n", block.GetHash().ToString().c_str());
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
-        assert(block.hashMerkleRoot == uint256("0x5059f122ff665b4382ca3a862dd238330b26a86dbce2ee90840961fed656e0a1"));
+        assert(block.hashMerkleRoot == uint256("0x346963a8aa39543b9cd99c944a713a4226aa2a8593d4e85f760be810cab2e9c1"));
 
         // If genesis block hash does not match, then generate new genesis hash.
         if (false && block.GetHash() != hashGenesisBlock)
